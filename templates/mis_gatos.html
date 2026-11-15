@@ -1,0 +1,252 @@
+
+{% extends "base.html" %}
+
+{% block title %}Mis gatos | MiauSalud{% endblock %}
+
+{% block content %}
+
+<div class="contenedor">
+
+    <!-- ENCABEZADO -->
+    <div class="encabezado-gatos">
+        <div>
+            <h1>🐱 Mis gatos</h1>
+            <p>Conoce y administra a los integrantes de tu familia felina.</p>
+        </div>
+
+        <a href="/gatos" class="boton-agregar">
+            ➕ Agregar gato
+        </a>
+    </div>
+
+    <!-- CANTIDAD DE GATOS -->
+    <div class="resumen-gatos">
+        🐾 Gatos registrados: {{ gatos|length }}
+    </div>
+
+    <!-- LISTA DE GATOS -->
+    {% if gatos %}
+
+    <div class="lista-gatos">
+
+        {% for gato in gatos %}
+
+        <article class="tarjeta gato-perfil">
+
+            <!-- FOTO -->
+            {% if gato["foto"] %}
+                <img
+                    src="{{ url_for('static', filename=gato['foto']) }}"
+                    alt="Foto de {{ gato['nombre'] }}"
+                    class="foto-perfil">
+            {% else %}
+                <div class="foto-placeholder">🐱</div>
+            {% endif %}
+
+            <!-- INFORMACIÓN DEL GATO -->
+            <h2>{{ gato["nombre"] }}</h2>
+
+            <p>
+                <strong>Sexo:</strong>
+                {{ gato["sexo"] or "No registrado" }}
+            </p>
+
+            <p>
+                <strong>Fecha de nacimiento:</strong>
+                {{ gato["fecha_nacimiento"] or "No registrada" }}
+            </p>
+
+            <p>
+                <strong>Tarjeta NFC:</strong>
+                {{ gato["uid_nfc"] or "No asignada" }}
+            </p>
+
+            <hr>
+
+            <!-- PESO -->
+            <h3>⚖️ Información de peso</h3>
+
+            <p>
+                <strong>Peso inicial:</strong>
+                {% if gato["peso_inicial"] is not none %}
+                    {{ "%.2f"|format(gato["peso_inicial"]) }} kg
+                {% else %}
+                    No registrado
+                {% endif %}
+            </p>
+
+            <hr>
+
+            <!-- ALIMENTACIÓN -->
+            <h3>🍽️ Alimentación</h3>
+
+            <p>
+                <strong>Tipo:</strong>
+                {{ gato["tipo_alimento"] or "No registrado" }}
+            </p>
+
+            <p>
+                <strong>Alimento:</strong>
+                {{ gato["nombre_alimento"] or "No registrado" }}
+            </p>
+
+            <p>
+                <strong>Gramos por ración:</strong>
+                {{ gato["gramos_racion"] or 0 }} g
+            </p>
+
+            <p>
+                <strong>Raciones al día:</strong>
+                {{ gato["raciones_dia"] or 0 }}
+            </p>
+
+            <!-- BOTONES -->
+            <div class="acciones-gato">
+
+                <!-- EDITAR -->
+                <a href="/editar-gato/{{ gato['id'] }}"
+                   class="boton-editar">
+                    ✏️ Editar perfil
+                </a>
+
+                <!-- ELIMINAR -->
+                <button
+                    type="button"
+                    class="boton-eliminar"
+                    data-url="{{ url_for('eliminar_gato_ruta', gato_id=gato['id']) }}"
+                    data-nombre="{{ gato['nombre'] }}"
+                    onclick="abrirModalEliminar(this)">
+                    🗑️ Eliminar
+                </button>
+
+            </div>
+
+        </article>
+
+        {% endfor %}
+
+    </div>
+
+    {% else %}
+
+    <!-- ESTADO VACÍO -->
+    <div class="tarjeta estado-vacio">
+
+        <div class="foto-placeholder">😿</div>
+
+        <h2>Todavía no hay gatos registrados</h2>
+
+        <p>Registra tu primer michi para comenzar a cuidar de él.</p>
+
+        <a href="/gatos" class="boton-agregar">
+            ➕ Registrar mi primer michi
+        </a>
+
+    </div>
+
+    {% endif %}
+
+</div>
+
+<!-- MODAL PERSONALIZADO MIAUSALUD -->
+<div id="modalEliminar" class="modal-eliminar">
+
+    <div class="modal-contenido">
+
+        <!-- CERRAR -->
+        <button
+            type="button"
+            class="modal-cerrar"
+            onclick="cerrarModalEliminar()">
+            ✕
+        </button>
+
+        <!-- GATITO -->
+        <div class="modal-gatito">
+            🐱
+        </div>
+
+        <!-- MENSAJE -->
+        <h2>MiauSalud pregunta</h2>
+
+        <p class="modal-mensaje">
+            ¿Quieres eliminar a
+            <strong id="nombreGatoEliminar">este michi</strong>?
+        </p>
+
+        <p class="modal-submensaje">
+            Su perfil dejará de aparecer en Mis gatos.
+        </p>
+
+        <!-- BOTONES DEL MODAL -->
+        <div class="modal-botones">
+
+            <button
+                type="button"
+                class="modal-cancelar"
+                onclick="cerrarModalEliminar()">
+                Cancelar
+            </button>
+
+            <form id="formEliminarGato" method="POST">
+
+                <button type="submit" class="modal-confirmar">
+                    🗑️ Sí, eliminar
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- JAVASCRIPT -->
+<script>
+
+function abrirModalEliminar(boton) {
+
+    const modal = document.getElementById("modalEliminar");
+    const formulario = document.getElementById("formEliminarGato");
+    const nombreGato = document.getElementById("nombreGatoEliminar");
+
+    const url = boton.dataset.url;
+    const nombre = boton.dataset.nombre;
+
+    formulario.action = url;
+    nombreGato.textContent = nombre;
+
+    modal.classList.add("modal-visible");
+    document.body.classList.add("modal-abierto");
+}
+
+function cerrarModalEliminar() {
+
+    const modal = document.getElementById("modalEliminar");
+
+    modal.classList.remove("modal-visible");
+    document.body.classList.remove("modal-abierto");
+}
+
+// Cerrar al hacer clic fuera del modal
+document.getElementById("modalEliminar").addEventListener("click", function(event) {
+
+    if (event.target === this) {
+        cerrarModalEliminar();
+    }
+
+});
+
+// Cerrar con Escape
+document.addEventListener("keydown", function(event) {
+
+    if (event.key === "Escape") {
+        cerrarModalEliminar();
+    }
+
+});
+
+</script>
+
+{% endblock %}

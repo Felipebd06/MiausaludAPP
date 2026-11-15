@@ -1,0 +1,478 @@
+
+{% extends "base.html" %}
+
+{% block title %}Alimentación | MiauSalud{% endblock %}
+
+{% block content %}
+
+<style>
+    .alimentacion-container {
+        max-width: 1200px;
+        margin: auto;
+        padding: 20px;
+    }
+
+    .alimentacion-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin-bottom: 25px;
+    }
+
+    .alimentacion-header h1 {
+        color: #456b91;
+        margin-bottom: 5px;
+    }
+
+    .alimentacion-header p {
+        color: #7892a8;
+    }
+
+    .selector-gato {
+        background: white;
+        padding: 12px 18px;
+        border-radius: 15px;
+        border: 1px solid #d9e9f5;
+    }
+
+    .selector-gato select {
+        padding: 8px;
+        border-radius: 8px;
+        border: 1px solid #c9dce9;
+        background: #f7fbff;
+        color: #456b91;
+    }
+
+    .alimentacion-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 20px;
+        margin-bottom: 25px;
+    }
+
+    .alimentacion-card {
+        background: #ffffff;
+        border: 1px solid #dceaf5;
+        border-radius: 20px;
+        padding: 22px;
+        box-shadow: 0 4px 12px rgba(100, 150, 190, 0.08);
+    }
+
+    .alimentacion-card h3 {
+        font-size: 15px;
+        color: #7892a8;
+        margin-bottom: 12px;
+    }
+
+    .alimentacion-card .valor {
+        font-size: 28px;
+        font-weight: bold;
+        color: #456b91;
+    }
+
+    .alimentacion-card .detalle {
+        font-size: 13px;
+        color: #91a8bb;
+        margin-top: 8px;
+    }
+
+    .alimentacion-seccion {
+        background: white;
+        border: 1px solid #dceaf5;
+        border-radius: 20px;
+        padding: 25px;
+        margin-bottom: 25px;
+        box-shadow: 0 4px 12px rgba(100, 150, 190, 0.08);
+    }
+
+    .alimentacion-seccion h2 {
+        color: #456b91;
+        margin-bottom: 20px;
+        font-size: 20px;
+    }
+
+    .alimentacion-tabla {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .alimentacion-tabla th,
+    .alimentacion-tabla td {
+        padding: 13px;
+        text-align: left;
+        border-bottom: 1px solid #edf3f8;
+    }
+
+    .alimentacion-tabla th {
+        color: #7892a8;
+        font-size: 13px;
+        background: #f7fbff;
+    }
+
+    .alimentacion-tabla td {
+        color: #56748e;
+    }
+
+    .alimentacion-tabla tr:hover {
+        background: #f9fcff;
+    }
+
+    .alimentacion-vacio {
+        text-align: center;
+        padding: 35px;
+        color: #91a8bb;
+    }
+
+    .alimentacion-chart {
+        position: relative;
+        height: 300px;
+    }
+
+    .alimentacion-mensaje {
+        padding: 15px;
+        border-radius: 12px;
+        background: #f2f8ff;
+        color: #6486a5;
+        margin-bottom: 20px;
+        display: none;
+    }
+
+    @media (max-width: 600px) {
+        .alimentacion-container {
+            padding: 10px;
+        }
+
+        .alimentacion-seccion {
+            padding: 15px;
+        }
+
+        .alimentacion-tabla th,
+        .alimentacion-tabla td {
+            padding: 9px;
+            font-size: 12px;
+        }
+    }
+</style>
+
+<div class="alimentacion-container">
+
+    <div class="alimentacion-header">
+        <div>
+            <h1>🍽️ Alimentación</h1>
+            <p>Seguimiento nutricional y control de comidas de tus michis.</p>
+        </div>
+
+        <div class="selector-gato">
+            <label for="selectorAlimentacion">🐱 Seleccionar gato:</label>
+
+            <select id="selectorAlimentacion">
+                {% for gato in gatos %}
+                <option value="{{ gato['id'] }}">
+                    {{ gato['nombre'] }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+
+    <div id="mensajeAlimentacion" class="alimentacion-mensaje"></div>
+
+    {% if gatos %}
+
+    <!-- TARJETAS DE INFORMACIÓN -->
+
+    <div class="alimentacion-grid">
+
+        <div class="alimentacion-card">
+            <h3>🌡️ Temperatura del alimento</h3>
+            <div class="valor" id="temperaturaAlimento">-- °C</div>
+            <div class="detalle">Última temperatura registrada</div>
+        </div>
+
+        <div class="alimentacion-card">
+            <h3>🍗 Consumo de hoy</h3>
+            <div class="valor" id="gramosHoy">0 g</div>
+            <div class="detalle">Cantidad total consumida</div>
+        </div>
+
+        <div class="alimentacion-card">
+            <h3>🐾 Comidas de hoy</h3>
+            <div class="valor" id="comidasHoy">0</div>
+            <div class="detalle">Número de alimentaciones</div>
+        </div>
+
+        <div class="alimentacion-card">
+            <h3>⚖️ Promedio por ración</h3>
+            <div class="valor" id="promedioRacion">0 g</div>
+            <div class="detalle">Promedio de gramos por comida</div>
+        </div>
+
+    </div>
+
+    <!-- ÚLTIMA ALIMENTACIÓN -->
+
+    <div class="alimentacion-seccion">
+        <h2>🕒 Última alimentación</h2>
+        <p id="ultimaComida" style="color:#7892a8;">
+            No hay registros de alimentación.
+        </p>
+    </div>
+
+    <!-- GRÁFICA SEMANAL -->
+
+    <div class="alimentacion-seccion">
+        <h2>📊 Consumo semanal</h2>
+
+        <div class="alimentacion-chart">
+            <canvas id="graficaAlimentacion"></canvas>
+        </div>
+    </div>
+
+    <!-- HISTORIAL -->
+
+    <div class="alimentacion-seccion">
+        <h2>📋 Historial de alimentación</h2>
+
+        <div style="overflow-x:auto;">
+            <table class="alimentacion-tabla">
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Cantidad</th>
+                    </tr>
+                </thead>
+
+                <tbody id="tablaAlimentacion">
+                    <tr>
+                        <td colspan="2" class="alimentacion-vacio">
+                            Cargando historial...
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    {% else %}
+
+    <div class="alimentacion-seccion alimentacion-vacio">
+        <h2>🐱 No tienes gatos registrados</h2>
+        <p>Registra tu primer michi para comenzar a monitorear su alimentación.</p>
+        <br>
+        <a href="{{ url_for('gatos') }}">Registrar gato</a>
+    </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+
+{% if gatos %}
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const selector = document.getElementById("selectorAlimentacion");
+    const temperatura = document.getElementById("temperaturaAlimento");
+    const gramosHoy = document.getElementById("gramosHoy");
+    const comidasHoy = document.getElementById("comidasHoy");
+    const promedioRacion = document.getElementById("promedioRacion");
+    const ultimaComida = document.getElementById("ultimaComida");
+    const tabla = document.getElementById("tablaAlimentacion");
+    const mensaje = document.getElementById("mensajeAlimentacion");
+
+    let grafica = null;
+
+    function mostrarMensaje(texto) {
+        mensaje.textContent = texto;
+        mensaje.style.display = "block";
+    }
+
+    function ocultarMensaje() {
+        mensaje.style.display = "none";
+    }
+
+    function formatearFecha(fecha) {
+        if (!fecha) return "Sin fecha";
+
+        return fecha.replace("T", " ");
+    }
+
+    async function cargarAlimentacion(gatoId) {
+
+        ocultarMensaje();
+
+        try {
+
+            const respuesta = await fetch(`/api/alimentacion/${gatoId}`);
+
+            if (!respuesta.ok) {
+                throw new Error("No se pudo consultar la alimentación.");
+            }
+
+            const data = await respuesta.json();
+
+            // RESUMEN
+
+            const resumen = data.resumen || {};
+
+            gramosHoy.textContent =
+                `${Number(resumen.gramos || 0).toFixed(1)} g`;
+
+            comidasHoy.textContent =
+                resumen.comidas || 0;
+
+            promedioRacion.textContent =
+                `${Number(resumen.promedio_gramos || 0).toFixed(1)} g`;
+
+            // TEMPERATURA
+
+            if (data.temperatura && data.temperatura.temperatura != null) {
+
+                temperatura.textContent =
+                    `${Number(data.temperatura.temperatura).toFixed(1)} °C`;
+
+            } else {
+
+                temperatura.textContent = "-- °C";
+            }
+
+            // ÚLTIMA ALIMENTACIÓN
+
+            if (resumen.ultima_comida) {
+
+                ultimaComida.textContent =
+                    `Última comida registrada: ${formatearFecha(resumen.ultima_comida)}`;
+
+            } else {
+
+                ultimaComida.textContent =
+                    "Este gato todavía no tiene registros de alimentación.";
+            }
+
+            // HISTORIAL
+
+            const historial = data.historial || [];
+
+            tabla.innerHTML = "";
+
+            if (historial.length === 0) {
+
+                tabla.innerHTML = `
+                    <tr>
+                        <td colspan="2" class="alimentacion-vacio">
+                            No hay registros de alimentación.
+                        </td>
+                    </tr>
+                `;
+
+            } else {
+
+                historial.forEach(function (registro) {
+
+                    const fila = document.createElement("tr");
+
+                    const fecha = document.createElement("td");
+                    fecha.textContent = formatearFecha(registro.fecha);
+
+                    const cantidad = document.createElement("td");
+                    cantidad.textContent =
+                        `${Number(registro.cantidad_gramos || 0).toFixed(1)} g`;
+
+                    fila.appendChild(fecha);
+                    fila.appendChild(cantidad);
+
+                    tabla.appendChild(fila);
+                });
+            }
+
+            // GRÁFICA SEMANAL
+
+            const semanal = data.semanal || [];
+
+            const etiquetas = semanal.map(item => item.dia);
+            const cantidades = semanal.map(item => Number(item.gramos || 0));
+
+            if (typeof Chart !== "undefined") {
+
+                const canvas = document.getElementById("graficaAlimentacion");
+
+                if (grafica) {
+                    grafica.destroy();
+                }
+
+                grafica = new Chart(canvas, {
+                    type: "bar",
+
+                    data: {
+                        labels: etiquetas,
+
+                        datasets: [{
+                            label: "Gramos consumidos",
+                            data: cantidades,
+                            backgroundColor: "rgba(135, 190, 235, 0.7)",
+                            borderColor: "#78acd4",
+                            borderWidth: 2,
+                            borderRadius: 8
+                        }]
+                    },
+
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+
+                        plugins: {
+                            legend: {
+                                display: true
+                            }
+                        },
+
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: "Gramos"
+                                }
+                            },
+
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: "Día"
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+        } catch (error) {
+
+            console.error(error);
+
+            mostrarMensaje(
+                "No fue posible cargar la información de alimentación."
+            );
+        }
+    }
+
+    selector.addEventListener("change", function () {
+        cargarAlimentacion(this.value);
+    });
+
+    if (selector.value) {
+        cargarAlimentacion(selector.value);
+    }
+
+});
+</script>
+
+{% endif %}
+
+{% endblock %}

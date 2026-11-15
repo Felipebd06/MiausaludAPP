@@ -1,0 +1,405 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+.stats-header {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:15px;
+    margin-bottom:20px;
+}
+
+.stats-grid {
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:15px;
+    margin-bottom:20px;
+}
+
+.stats-card {
+    background:white;
+    padding:20px;
+    border-radius:15px;
+    box-shadow:0 5px 15px rgba(80,110,160,.08);
+}
+
+.stats-card h4 {
+    font-size:13px;
+    color:#71829E;
+    font-weight:500;
+    margin-bottom:12px;
+}
+
+.stats-card .valor {
+    font-size:24px;
+    font-weight:700;
+    color:#527FC8;
+}
+
+.stats-card small {
+    color:#8A9AB5;
+    display:block;
+    margin-top:8px;
+    font-size:11px;
+}
+
+.stats-panel {
+    background:white;
+    border-radius:15px;
+    padding:20px;
+    margin-bottom:20px;
+    box-shadow:0 5px 15px rgba(80,110,160,.08);
+}
+
+.stats-panel h3 {
+    color:#527FC8;
+    font-size:17px;
+    margin-bottom:15px;
+}
+
+.stats-charts {
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:20px;
+}
+
+.stats-table {
+    width:100%;
+    border-collapse:collapse;
+    font-size:13px;
+}
+
+.stats-table th {
+    background:#F4F8FF;
+    color:#71829E;
+    text-align:left;
+    padding:12px;
+}
+
+.stats-table td {
+    padding:12px;
+    border-bottom:1px solid #EDF2FA;
+    color:#344563;
+}
+
+.stats-empty {
+    color:#8A9AB5;
+    font-size:13px;
+}
+
+@media(max-width:1000px) {
+    .stats-grid {
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .stats-charts {
+        grid-template-columns:1fr;
+    }
+}
+
+@media(max-width:500px) {
+    .stats-grid {
+        grid-template-columns:1fr;
+    }
+}
+</style>
+
+<div class="stats-header">
+    <div>
+        <h2>📊 Estadísticas</h2>
+        <p style="color:#8A9AB5;font-size:13px;">
+            Análisis nutricional y seguimiento de salud de tus michis.
+        </p>
+    </div>
+
+    <div style="background:white;padding:12px;border-radius:12px;">
+        🐱 Seleccionar gato:
+        <select id="selectorGato" onchange="cargarEstadisticas()"
+                style="padding:8px;border:1px solid #D6E4FF;border-radius:8px;">
+            {% for gato in gatos %}
+            <option value="{{ gato.id }}">{{ gato.nombre }}</option>
+            {% endfor %}
+        </select>
+    </div>
+</div>
+
+{% if gatos %}
+
+<div class="stats-grid">
+
+    <div class="stats-card">
+        <h4>⚖️ Peso promedio</h4>
+        <div class="valor" id="pesoPromedio">-- kg</div>
+        <small>Promedio histórico</small>
+    </div>
+
+    <div class="stats-card">
+        <h4>🍗 Consumo total</h4>
+        <div class="valor" id="consumoTotal">0 g</div>
+        <small>Alimento registrado</small>
+    </div>
+
+    <div class="stats-card">
+        <h4>🍽️ Alimentaciones</h4>
+        <div class="valor" id="totalComidas">0</div>
+        <small>Total de registros</small>
+    </div>
+
+    <div class="stats-card">
+        <h4>🌡️ Temperatura promedio</h4>
+        <div class="valor" id="temperaturaPromedio">-- °C</div>
+        <small>Temperatura registrada</small>
+    </div>
+
+</div>
+
+<div class="stats-panel">
+    <h3>📈 Seguimiento del peso</h3>
+
+    <div class="stats-charts">
+        <div style="height:300px;">
+            <canvas id="graficaPeso"></canvas>
+        </div>
+
+        <div style="height:300px;">
+            <canvas id="graficaConsumo"></canvas>
+        </div>
+    </div>
+</div>
+
+<div class="stats-panel">
+    <h3>📋 Resumen de indicadores</h3>
+
+    <div style="overflow-x:auto;">
+        <table class="stats-table">
+            <thead>
+                <tr>
+                    <th>Indicador</th>
+                    <th>Resultado</th>
+                    <th>Descripción</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr>
+                    <td>Peso mínimo</td>
+                    <td id="pesoMinimo">--</td>
+                    <td>Menor peso registrado</td>
+                </tr>
+
+                <tr>
+                    <td>Peso máximo</td>
+                    <td id="pesoMaximo">--</td>
+                    <td>Mayor peso registrado</td>
+                </tr>
+
+                <tr>
+                    <td>Consumo promedio por comida</td>
+                    <td id="consumoPromedio">--</td>
+                    <td>Gramos por alimentación</td>
+                </tr>
+
+                <tr>
+                    <td>Temperatura mínima</td>
+                    <td id="temperaturaMinima">--</td>
+                    <td>Menor temperatura registrada</td>
+                </tr>
+
+                <tr>
+                    <td>Temperatura máxima</td>
+                    <td id="temperaturaMaxima">--</td>
+                    <td>Mayor temperatura registrada</td>
+                </tr>
+
+                <tr>
+                    <td>Total de pesajes</td>
+                    <td id="totalPesajes">0</td>
+                    <td>Registros de peso</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% else %}
+
+<div class="stats-panel">
+    <h3>🐱 No tienes gatos registrados</h3>
+    <p class="stats-empty">
+        Agrega un gato para consultar sus estadísticas.
+    </p>
+    <a href="/gatos">➕ Agregar gato</a>
+</div>
+
+{% endif %}
+
+{% endblock %}
+
+{% block scripts %}
+
+{% if gatos %}
+
+<script>
+let graficaPeso = null;
+let graficaConsumo = null;
+
+async function cargarEstadisticas() {
+
+    const gatoId = document.getElementById("selectorGato").value;
+
+    try {
+
+        // Consultar estadísticas
+        const respuesta = await fetch(`/api/estadisticas/${gatoId}`);
+        const datos = await respuesta.json();
+
+        if (!respuesta.ok) {
+            throw new Error(datos.error || "Error consultando estadísticas");
+        }
+
+        // Tarjetas
+        document.getElementById("pesoPromedio").textContent =
+            datos.peso_promedio != null
+            ? Number(datos.peso_promedio).toFixed(2) + " kg"
+            : "-- kg";
+
+        document.getElementById("consumoTotal").textContent =
+            Number(datos.consumo_total || 0).toFixed(1) + " g";
+
+        document.getElementById("totalComidas").textContent =
+            datos.total_comidas || 0;
+
+        document.getElementById("temperaturaPromedio").textContent =
+            datos.temperatura_promedio != null
+            ? Number(datos.temperatura_promedio).toFixed(1) + " °C"
+            : "-- °C";
+
+        // Tabla
+        document.getElementById("pesoMinimo").textContent =
+            datos.peso_minimo != null
+            ? Number(datos.peso_minimo).toFixed(2) + " kg"
+            : "--";
+
+        document.getElementById("pesoMaximo").textContent =
+            datos.peso_maximo != null
+            ? Number(datos.peso_maximo).toFixed(2) + " kg"
+            : "--";
+
+        document.getElementById("consumoPromedio").textContent =
+            Number(datos.consumo_promedio || 0).toFixed(1) + " g";
+
+        document.getElementById("temperaturaMinima").textContent =
+            datos.temperatura_minima != null
+            ? Number(datos.temperatura_minima).toFixed(1) + " °C"
+            : "--";
+
+        document.getElementById("temperaturaMaxima").textContent =
+            datos.temperatura_maxima != null
+            ? Number(datos.temperatura_maxima).toFixed(1) + " °C"
+            : "--";
+
+        document.getElementById("totalPesajes").textContent =
+            datos.total_pesajes || 0;
+
+        // Obtener historial de peso
+        const respuestaPeso = await fetch(`/api/pesajes/${gatoId}`);
+        const datosPeso = await respuestaPeso.json();
+
+        const pesajes = datosPeso.historial || [];
+
+        pesajes.sort((a,b) => new Date(a.fecha) - new Date(b.fecha));
+
+        if (graficaPeso) graficaPeso.destroy();
+
+        graficaPeso = new Chart(
+            document.getElementById("graficaPeso"),
+            {
+                type:"line",
+
+                data:{
+                    labels:pesajes.map(p =>
+                        new Date(p.fecha).toLocaleDateString("es-CO")
+                    ),
+
+                    datasets:[{
+                        label:"Peso (kg)",
+                        data:pesajes.map(p => Number(p.peso_kg)),
+                        borderColor:"#6C9CE5",
+                        backgroundColor:"rgba(108,156,229,.15)",
+                        fill:true,
+                        tension:.3
+                    }]
+                },
+
+                options:{
+                    responsive:true,
+                    maintainAspectRatio:false,
+                    scales:{
+                        y:{
+                            title:{
+                                display:true,
+                                text:"Peso (kg)"
+                            }
+                        }
+                    }
+                }
+            }
+        );
+
+        // Obtener historial de alimentación
+        const respuestaComida = await fetch(`/api/alimentacion/${gatoId}`);
+        const datosComida = await respuestaComida.json();
+
+        const semanal = datosComida.semanal || [];
+
+        if (graficaConsumo) graficaConsumo.destroy();
+
+        graficaConsumo = new Chart(
+            document.getElementById("graficaConsumo"),
+            {
+                type:"bar",
+
+                data:{
+                    labels:semanal.map(d => d.dia),
+
+                    datasets:[{
+                        label:"Consumo (g)",
+                        data:semanal.map(d => Number(d.gramos || 0)),
+                        backgroundColor:"#A9C6F3",
+                        borderColor:"#6C9CE5",
+                        borderWidth:1
+                    }]
+                },
+
+                options:{
+                    responsive:true,
+                    maintainAspectRatio:false,
+                    scales:{
+                        y:{
+                            beginAtZero:true,
+                            title:{
+                                display:true,
+                                text:"Gramos"
+                            }
+                        }
+                    }
+                }
+            }
+        );
+
+    } catch(error) {
+        console.error(error);
+        alert("No fue posible cargar las estadísticas.");
+    }
+}
+
+cargarEstadisticas();
+</script>
+
+{% endif %}
+
+{% endblock %}

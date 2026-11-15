@@ -1,0 +1,81 @@
+
+{% extends "base.html" %}
+
+{% block title %}Registrar gato | MiauSalud{% endblock %}
+
+{% block content %}
+
+<div class="contenedor">
+
+    <h1>🐱 Registrar un michi</h1>
+    <p>Completa el perfil de tu compañero felino.</p>
+
+    <form action="/gatos" method="POST" enctype="multipart/form-data">
+
+        <label>Nombre</label>
+        <input type="text" name="nombre"
+               placeholder="Nombre del michi" required>
+
+        <label>Fecha de nacimiento</label>
+        <input type="date" name="fecha_nacimiento">
+
+        <label>Sexo</label>
+        <select name="sexo">
+            <option value="">Seleccionar</option>
+            <option value="Macho">Macho</option>
+            <option value="Hembra">Hembra</option>
+        </select>
+
+        <label>Tarjeta NFC</label>
+        <input type="text" name="uid_nfc"
+               placeholder="UID de la tarjeta">
+
+        <label>Fotografía</label>
+        <input type="file" name="foto" accept="image/*">
+
+        <hr>
+
+        <h2>🍽️ Alimentación</h2>
+
+        <label>Tipo de alimento</label>
+        <select name="tipo_alimento" required>
+            <option value="">Seleccionar</option>
+            <option value="Seco">Seco</option>
+            <option value="Humedo">Húmedo</option>
+            <option value="Mixto">Mixto</option>
+        </select>
+
+        <label>Nombre del alimento</label>
+        <input type="text" name="nombre_alimento"
+               placeholder="Marca o referencia">
+
+        <label>Gramos por ración</label>
+        <input type="number" name="gramos_racion"
+               min="1" step="0.1" required>
+
+        <label>Raciones al día</label>
+        <input type="number" name="raciones_dia"
+               min="1" max="20" required>
+
+        <hr>
+
+        <h2>⚖️ Peso inicial</h2>
+
+        <label for="peso_inicial">Peso inicial (kg)</label>
+        <input
+            type="number"
+            id="peso_inicial"
+            name="peso_inicial"
+            min="0.1"
+            max="30"
+            step="0.01"
+            placeholder="Ej. 4.50"
+        >
+
+        <button type="submit">Guardar michi 🐾</button>
+
+    </form>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,1395 @@
+
+/* ==========================================
+   MIAUSALUD - DASHBOARD KAWAII PROFESIONAL
+   ========================================== */
+
+:root {
+    --azul-fondo: #A9C6F3;
+    --azul-oscuro: #779BD5;
+    --blanco: #FFFFFF;
+    --negro: #222222;
+    --rosa: #FCE7EF;
+    --amarillo: #FFF1CF;
+    --verde: #DDF5D8;
+}
+
+/* CONFIGURACION GENERAL */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: var(--azul-fondo);
+    color: var(--negro);
+    min-height: 100vh;
+    padding: 30px;
+}
+
+/* CONTENEDOR */
+
+.contenedor {
+    max-width: 1400px;
+    margin: auto;
+    background-color: var(--blanco);
+    border: 3px solid var(--negro);
+    border-radius: 28px;
+    padding: 30px;
+}
+
+/* ENCABEZADO */
+
+.encabezado {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding-bottom: 25px;
+    border-bottom: 2px solid var(--negro);
+}
+
+.marca {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+
+.logo-gato {
+    width: 85px;
+    height: 85px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 2px solid var(--negro);
+}
+
+.marca h1 {
+    font-size: 38px;
+    margin-bottom: 8px;
+}
+
+.marca p {
+    color: #555555;
+    font-size: 16px;
+}
+
+/* CONEXION */
+
+.conexion {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background-color: var(--verde);
+    border: 2px solid #477B3D;
+    border-radius: 30px;
+    padding: 12px 20px;
+    font-weight: bold;
+}
+
+.punto-verde {
+    width: 12px;
+    height: 12px;
+    background-color: #4C9A42;
+    border-radius: 50%;
+}
+
+/* CONTENIDO */
+
+.contenido {
+    margin-top: 25px;
+}
+
+/* TARJETAS PRINCIPALES */
+
+
+.tarjetas {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+
+.tarjeta {
+    border: 2px solid var(--negro);
+    border-radius: 22px;
+    padding: 25px;
+    background-color: var(--blanco);
+}
+
+.alimentacion {
+    background-color: var(--rosa);
+}
+
+.temperatura {
+    background-color: var(--amarillo);
+}
+
+.tarjeta h2 {
+    font-size: 22px;
+    margin-bottom: 15px;
+}
+
+.icono {
+    font-size: 35px;
+}
+
+.valor {
+    font-size: 42px;
+    font-weight: bold;
+    margin: 15px 0 8px;
+}
+
+.descripcion {
+    color: #555555;
+    font-size: 16px;
+}
+
+/* ZONA DEL GATO */
+
+.zona-gato {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 25px;
+    padding: 25px;
+    margin: 25px 0;
+    background-color: #EAF1FC;
+    border: 2px dashed var(--azul-oscuro);
+    border-radius: 22px;
+    text-align: center;
+}
+
+.zona-gato img {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 20px;
+}
+
+.zona-gato h2 {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.zona-gato p {
+    color: #555555;
+}
+
+/* PANELES INFERIORES */
+
+.paneles {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr;
+    gap: 20px;
+}
+
+.grafica {
+    background-color: #FFFFFF;
+}
+
+.titulo-panel {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.titulo-panel span {
+    background-color: #EAF1FC;
+    padding: 8px 12px;
+    border-radius: 15px;
+    font-size: 14px;
+}
+
+.grafica canvas {
+    width: 100%;
+    max-height: 320px;
+}
+
+/* ESTADO DEL SISTEMA */
+
+.estado {
+    background-color: #FFFFFF;
+}
+
+.estado-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    padding: 18px 0;
+    border-bottom: 1px solid #DDDDDD;
+}
+
+.estado-item:last-child {
+    border-bottom: none;
+}
+
+.estado-ok {
+    background-color: var(--verde);
+    color: #356B2C;
+    padding: 7px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+/* PIE DE PAGINA */
+
+footer {
+    text-align: center;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #DDDDDD;
+    color: #666666;
+    font-size: 14px;
+}
+
+/* ADAPTACION A TABLETS */
+
+@media (max-width: 900px) {
+
+    .paneles {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+/* ADAPTACION A CELULARES */
+
+@media (max-width: 600px) {
+
+    body {
+        padding: 12px;
+    }
+
+    .contenedor {
+        padding: 18px;
+        border-radius: 20px;
+    }
+
+    .encabezado {
+        justify-content: center;
+        text-align: center;
+    }
+
+    .marca {
+        flex-direction: column;
+    }
+
+    .marca h1 {
+        font-size: 30px;
+    }
+
+    .tarjetas {
+        grid-template-columns: 1fr;
+    }
+
+    .zona-gato {
+        flex-direction: column;
+    }
+
+    .valor {
+        font-size: 35px;
+    }
+
+    .estado-item {
+        flex-wrap: wrap;
+    }
+
+}
+
+/* TARJETA DE PESO */
+
+.peso {
+    background-color: #E5F3E1;
+}
+
+/* ADAPTACION RESPONSIVE */
+
+@media (max-width: 900px) {
+    .tarjetas {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .tarjetas {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ========================================
+   FORMULARIO DE REGISTRO DE GATOS
+======================================== */
+
+form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px 20px;
+    margin-top: 25px;
+}
+
+form label {
+    display: block;
+    font-weight: 600;
+    color: #344563;
+    margin-bottom: -6px;
+}
+
+form input,
+form select {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 11px 13px;
+    border: 1.5px solid #c5d4ec;
+    border-radius: 10px;
+    background: #f8fbff;
+    font-size: 15px;
+    outline: none;
+}
+
+form input:focus,
+form select:focus {
+    border-color: #6c9ce5;
+    box-shadow: 0 0 0 3px rgba(108,156,229,0.15);
+}
+
+form input[type="file"] {
+    background: white;
+}
+
+form button {
+    grid-column: 1 / -1;
+    padding: 14px;
+    border: none;
+    border-radius: 12px;
+    background: #6c9ce5;
+    color: white;
+    font-size: 17px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+form button:hover {
+    background: #507fc8;
+    transform: translateY(-2px);
+}
+
+form hr {
+    grid-column: 1 / -1;
+    width: 100%;
+    border: none;
+    border-top: 1px solid #dbe5f4;
+}
+
+form h2 {
+    grid-column: 1 / -1;
+    color: #5278b7;
+}
+
+/* Adaptación a celulares */
+@media (max-width: 600px) {
+    form {
+        grid-template-columns: 1fr;
+    }
+
+    form button,
+    form hr,
+    form h2 {
+        grid-column: 1;
+    }
+}
+
+/* ========================================
+   MIAUSALUD - MENU PRINCIPAL
+======================================== */
+
+.app-layout {
+    display: flex;
+    min-height: 100vh;
+    gap: 0;
+    background: #aec8f2;
+}
+
+/* MENU LATERAL */
+
+.sidebar {
+    width: 250px;
+    min-width: 250px;
+    background: #ffffff;
+    border-right: 2px solid #dce7f8;
+    padding: 25px 18px;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+}
+
+.sidebar-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px;
+    margin-bottom: 30px;
+}
+
+.sidebar-logo img {
+    width: 55px;
+    height: 55px;
+    object-fit: contain;
+    border-radius: 12px;
+}
+
+.sidebar-logo h2 {
+    color: #5278b7;
+    font-size: 23px;
+    margin: 0;
+}
+
+/* OPCIONES DEL MENU */
+
+.sidebar-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.menu-item {
+    display: block;
+    padding: 14px 16px;
+    border-radius: 12px;
+    text-decoration: none;
+    color: #344563;
+    font-size: 16px;
+    font-weight: 600;
+    transition: 0.2s;
+}
+
+.menu-item:hover {
+    background: #eaf2ff;
+    color: #5278b7;
+    transform: translateX(3px);
+}
+
+.sidebar-footer {
+    margin-top: auto;
+    padding: 20px 10px 5px;
+    color: #8295b5;
+    font-size: 13px;
+    text-align: center;
+}
+
+/* CONTENIDO PRINCIPAL */
+
+.main-content {
+    flex: 1;
+    min-width: 0;
+    padding: 25px;
+    box-sizing: border-box;
+}
+
+.topbar {
+    background: white;
+    padding: 18px 25px;
+    border-radius: 18px;
+    margin-bottom: 25px;
+    box-shadow: 0 3px 12px rgba(60, 90, 140, 0.08);
+}
+
+.topbar h2 {
+    margin: 0;
+    color: #5278b7;
+}
+
+.page-content {
+    width: 100%;
+}
+
+/* ADAPTACION A CELULARES */
+
+@media (max-width: 750px) {
+    .app-layout {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        min-width: 0;
+        padding: 12px;
+        border-right: none;
+        border-bottom: 2px solid #dce7f8;
+    }
+
+    .sidebar-logo {
+        margin-bottom: 10px;
+    }
+
+    .sidebar-menu {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+
+    .menu-item {
+        padding: 10px;
+        font-size: 14px;
+    }
+
+    .sidebar-footer {
+        display: none;
+    }
+
+    .main-content {
+        padding: 12px;
+    }
+}
+
+/* ========================================
+   MENU SIEMPRE ACCESIBLE
+======================================== */
+
+.sidebar {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    flex-shrink: 0;
+    z-index: 100;
+    box-sizing: border-box;
+}
+
+/* El contenido principal puede desplazarse */
+.main-content {
+    flex: 1;
+    min-width: 0;
+}
+
+/* Adaptación móvil */
+@media (max-width: 750px) {
+    .sidebar {
+        position: sticky;
+        top: 0;
+        height: auto;
+        max-height: 45vh;
+        overflow-y: auto;
+    }
+}
+
+/* BOTON MENU */
+
+.menu-toggle {
+    background: #eaf2ff;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 15px;
+    font-size: 22px;
+    color: #5278b7;
+    cursor: pointer;
+}
+
+.menu-toggle:hover {
+    background: #d6e5ff;
+}
+
+/* OCULTAR MENU */
+
+.menu-oculto .sidebar {
+    display: none;
+}
+
+.menu-oculto .main-content {
+    width: 100%;
+}
+
+/* ========================================
+   MIS GATOS
+======================================== */
+
+.lista-gatos {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
+    margin-top: 25px;
+}
+
+.gato-perfil {
+    background: white;
+    padding: 25px;
+    border-radius: 20px;
+    border: 2px solid #dce7f8;
+    box-shadow: 0 4px 12px rgba(60, 90, 140, 0.08);
+}
+
+.gato-perfil h2 {
+    color: #5278b7;
+    text-align: center;
+}
+
+.foto-perfil {
+    width: 140px;
+    height: 140px;
+    display: block;
+    margin: auto;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 4px solid #dce7f8;
+}
+
+.foto-placeholder {
+    width: 140px;
+    height: 140px;
+    margin: auto;
+    border-radius: 50%;
+    background: #eaf2ff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 65px;
+}
+
+.gato-perfil hr {
+    border: none;
+    border-top: 1px solid #dce7f8;
+    margin: 18px 0;
+}
+
+.gato-perfil h3 {
+    color: #5278b7;
+}
+
+/* =====================================
+   PERFILES DE GATOS - MIAUSALUD
+===================================== */
+
+.encabezado-gatos {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-bottom: 25px;
+}
+
+.encabezado-gatos h1 {
+    color: #2c3e50;
+    margin-bottom: 8px;
+}
+
+.encabezado-gatos p {
+    color: #61718a;
+}
+
+.resumen-gatos {
+    background: #eaf2ff;
+    color: #5278b7;
+    padding: 15px 20px;
+    border-radius: 14px;
+    margin-bottom: 25px;
+    font-weight: 600;
+}
+
+.lista-gatos {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 25px;
+}
+
+.gato-perfil {
+    padding: 25px;
+    border-radius: 22px;
+    background: white;
+    border: 1px solid #d6e4ff;
+    box-shadow: 0 5px 15px rgba(80, 110, 160, 0.08);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.gato-perfil:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 25px rgba(80, 110, 160, 0.15);
+}
+
+.foto-perfil,
+.foto-placeholder {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    display: block;
+    margin: 0 auto 15px;
+    border: 4px solid #eaf2ff;
+}
+
+.foto-placeholder {
+    background: #eaf2ff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 55px;
+}
+
+.gato-perfil h2 {
+    text-align: center;
+    color: #5278b7;
+    margin-bottom: 20px;
+}
+
+.gato-perfil p {
+    margin: 8px 0;
+    color: #526078;
+}
+
+.gato-perfil hr {
+    border: none;
+    border-top: 1px solid #d6e4ff;
+    margin: 20px 0;
+}
+
+.gato-perfil h3 {
+    color: #5278b7;
+    margin-bottom: 12px;
+}
+
+.acciones-gato {
+    display: flex;
+    gap: 12px;
+    margin-top: 25px;
+    flex-wrap: wrap;
+}
+
+.acciones-gato form {
+    margin: 0;
+}
+
+.boton-editar,
+.boton-eliminar,
+.boton-agregar {
+    padding: 12px 18px;
+    border-radius: 12px;
+    font-weight: 600;
+    border: none;
+    text-decoration: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.2s;
+}
+
+.boton-editar {
+    background: #eaf2ff;
+    color: #5278b7;
+}
+
+.boton-editar:hover {
+    background: #d6e4ff;
+}
+
+.boton-eliminar {
+    background: #ffe9e9;
+    color: #bd5555;
+}
+
+.boton-eliminar:hover {
+    background: #ffd5d5;
+}
+
+.boton-agregar {
+    background: #6c9ce5;
+    color: white;
+}
+
+.boton-agregar:hover {
+    background: #527fc8;
+}
+
+.estado-vacio {
+    text-align: center;
+    padding: 40px;
+}
+
+/* FORMULARIO DE EDICION */
+
+.formulario-gato {
+    max-width: 850px;
+    margin: 0 auto;
+}
+
+.formulario-perfil {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 15px 25px;
+    align-items: center;
+    margin: 25px 0;
+}
+
+.formulario-perfil label {
+    font-weight: 600;
+    color: #526078;
+}
+
+.formulario-perfil input,
+.formulario-perfil select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #c8d9f7;
+    border-radius: 12px;
+    background: #f8fbff;
+    font-size: 15px;
+    box-sizing: border-box;
+}
+
+.formulario-perfil input:focus,
+.formulario-perfil select:focus {
+    outline: none;
+    border-color: #6c9ce5;
+    box-shadow: 0 0 0 3px #eaf2ff;
+}
+
+.formulario-gato hr {
+    border: none;
+    border-top: 1px solid #d6e4ff;
+    margin: 25px 0;
+}
+
+.formulario-gato h2 {
+    color: #5278b7;
+}
+
+@media (max-width: 650px) {
+    .formulario-perfil {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+}
+
+/* ==========================================
+   MODAL PERSONALIZADO MIAUSALUD
+========================================== */
+
+.modal-eliminar {
+    position: fixed;
+    inset: 0;
+    background: rgba(42, 70, 130, 0.48);
+    backdrop-filter: blur(7px);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 20px;
+    z-index: 9999;
+
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.25s ease, visibility 0.25s ease;
+}
+
+.modal-eliminar.modal-visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal-contenido {
+    position: relative;
+    width: 100%;
+    max-width: 480px;
+
+    background: linear-gradient(145deg, #ffffff, #eaf4ff);
+    border: 3px solid #d5e7ff;
+    border-radius: 30px;
+
+    padding: 35px 30px;
+    text-align: center;
+
+    box-shadow: 0 20px 60px rgba(45, 85, 160, 0.25);
+
+    transform: translateY(25px) scale(0.95);
+    transition: transform 0.3s ease;
+}
+
+.modal-visible .modal-contenido {
+    transform: translateY(0) scale(1);
+}
+
+.modal-cerrar {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+
+    width: 36px;
+    height: 36px;
+
+    border: none;
+    border-radius: 50%;
+
+    background: #e4efff;
+    color: #527bc7;
+
+    font-size: 18px;
+    cursor: pointer;
+
+    transition: background 0.2s, transform 0.2s;
+}
+
+.modal-cerrar:hover {
+    background: #d2e4ff;
+    transform: rotate(90deg);
+}
+
+.modal-gatito {
+    font-size: 75px;
+    margin-bottom: 10px;
+
+    animation: modalGatito 1.5s ease-in-out infinite;
+}
+
+.modal-contenido h2 {
+    color: #4b76c6;
+    font-size: 25px;
+    margin-bottom: 20px;
+}
+
+.modal-mensaje {
+    font-size: 20px;
+    color: #425a86;
+    line-height: 1.5;
+}
+
+.modal-mensaje strong {
+    color: #527bc7;
+}
+
+.modal-submensaje {
+    color: #8194b5;
+    font-size: 14px;
+    margin-top: 12px;
+}
+
+.modal-botones {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+
+    margin-top: 30px;
+}
+
+.modal-botones form {
+    margin: 0;
+}
+
+.modal-cancelar,
+.modal-confirmar {
+    padding: 13px 22px;
+    border-radius: 16px;
+
+    font-size: 15px;
+    font-weight: 600;
+
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.modal-cancelar {
+    background: white;
+    border: 2px solid #d4e3fb;
+    color: #5474ad;
+}
+
+.modal-cancelar:hover {
+    background: #edf4ff;
+    transform: translateY(-2px);
+}
+
+.modal-confirmar {
+    background: linear-gradient(135deg, #f36b86, #e84d70);
+    border: none;
+    color: white;
+
+    box-shadow: 0 5px 15px rgba(232, 77, 112, 0.2);
+}
+
+.modal-confirmar:hover {
+    background: linear-gradient(135deg, #e85c7a, #d93c60);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(232, 77, 112, 0.3);
+}
+
+/* Evitar desplazamiento de página con modal abierto */
+body.modal-abierto {
+    overflow: hidden;
+}
+
+/* Animación gatito */
+@keyframes modalGatito {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-7px);
+    }
+}
+
+/* Adaptación a celulares */
+@media (max-width: 480px) {
+
+    .modal-contenido {
+        padding: 30px 20px;
+        border-radius: 24px;
+    }
+
+    .modal-gatito {
+        font-size: 60px;
+    }
+
+    .modal-contenido h2 {
+        font-size: 22px;
+    }
+
+    .modal-mensaje {
+        font-size: 17px;
+    }
+
+    .modal-botones {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .modal-botones form {
+        width: 100%;
+    }
+
+    .modal-cancelar,
+    .modal-confirmar {
+        width: 100%;
+    }
+}
+
+/* ==========================================
+   DASHBOARD MIAUSALUD
+========================================== */
+
+.encabezado-dashboard {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-bottom: 25px;
+}
+
+.encabezado-dashboard h1 {
+    color: #5278b7;
+    margin-bottom: 8px;
+}
+
+.encabezado-dashboard p {
+    color: #61718a;
+}
+
+.selector-michi {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 220px;
+}
+
+.selector-michi label {
+    color: #5278b7;
+    font-weight: bold;
+}
+
+.selector-michi select {
+    padding: 13px;
+    border: 2px solid #d6e4ff;
+    border-radius: 14px;
+    background: #f8fbff;
+    color: #344563;
+    font-size: 16px;
+}
+
+.resumen-michi {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-bottom: 25px;
+}
+
+.dashboard-card {
+    text-align: center;
+    border: 2px solid #dce7f8;
+    box-shadow: 0 5px 15px rgba(80, 110, 160, 0.08);
+}
+
+.dashboard-card .valor {
+    color: #5278b7;
+}
+
+.gramos {
+    background: #eaf2ff;
+}
+
+.ultima-actividad {
+    margin-bottom: 25px;
+    background: #f8fbff;
+}
+
+.ultima-actividad h2 {
+    color: #5278b7;
+    margin-bottom: 20px;
+}
+
+.datos-michi {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+}
+
+.datos-michi p {
+    padding: 15px;
+    background: white;
+    border-radius: 12px;
+    border: 1px solid #dce7f8;
+}
+
+.datos-michi strong {
+    color: #5278b7;
+}
+
+.paneles-dashboard {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.paneles-dashboard canvas {
+    max-height: 300px;
+}
+
+@media (max-width: 900px) {
+    .resumen-michi,
+    .paneles-dashboard {
+        grid-template-columns: 1fr;
+    }
+
+    .datos-michi {
+        grid-template-columns: 1fr;
+    }
+}
+
+.paneles-dashboard {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+}
+
+.paneles-dashboard > div {
+    position: relative;
+    height: 300px;
+    min-height: 300px;
+}
+
+.paneles-dashboard canvas {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+@media (max-width: 768px) {
+    .paneles-dashboard {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ==========================================
+   MIAUSALUD - MEJORAS VISUALES GENERALES
+   ========================================== */
+
+/* PALETA Y ESTILO GLOBAL */
+
+:root {
+    --azul-principal: #6C9CE5;
+    --azul-hover: #527FC8;
+    --azul-claro: #EAF2FF;
+    --azul-borde: #D6E4FF;
+    --texto-principal: #344563;
+    --texto-secundario: #71829E;
+    --fondo-card: #FFFFFF;
+    --sombra-suave: 0 6px 20px rgba(80, 110, 160, 0.08);
+}
+
+body {
+    color: var(--texto-principal);
+}
+
+/* MENU LATERAL */
+
+.sidebar {
+    box-shadow: 4px 0 20px rgba(80, 110, 160, 0.04);
+}
+
+.sidebar-logo h2 {
+    font-weight: 800;
+    letter-spacing: -0.5px;
+}
+
+.sidebar-logo img {
+    border: 2px solid var(--azul-borde);
+    background: var(--azul-claro);
+}
+
+.menu-item {
+    position: relative;
+    overflow: hidden;
+}
+
+.menu-item.activo {
+    background: linear-gradient(135deg, #EAF2FF, #DDEAFF);
+    color: #456FAF;
+    box-shadow: inset 3px 0 0 #6C9CE5;
+    font-weight: 700;
+}
+
+.menu-item.activo:hover {
+    background: #DDEAFF;
+    transform: none;
+}
+
+/* BARRA SUPERIOR */
+
+.topbar {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    border: 1px solid #E4ECF8;
+    box-shadow: var(--sombra-suave);
+}
+
+.topbar h2 {
+    font-size: 21px;
+    font-weight: 700;
+}
+
+.menu-toggle {
+    transition: all 0.2s ease;
+}
+
+.menu-toggle:hover {
+    transform: scale(1.05);
+}
+
+/* TARJETAS */
+
+.tarjeta,
+.dashboard-card,
+.gato-perfil,
+.alimentacion-card,
+.alimentacion-seccion {
+    box-shadow: var(--sombra-suave);
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.tarjeta:hover,
+.dashboard-card:hover {
+    box-shadow: 0 10px 25px rgba(80, 110, 160, 0.12);
+}
+
+/* BOTONES */
+
+button,
+.boton-agregar,
+.boton-editar,
+.boton-eliminar {
+    transition: all 0.2s ease;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible {
+    outline: 3px solid rgba(108, 156, 229, 0.35);
+    outline-offset: 2px;
+}
+
+/* TABLAS */
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table th {
+    font-weight: 700;
+}
+
+table td {
+    vertical-align: middle;
+}
+
+/* TITULOS */
+
+h1,
+h2,
+h3 {
+    letter-spacing: -0.3px;
+}
+
+/* PAGINAS */
+
+.page-content {
+    max-width: 1600px;
+    margin: 0 auto;
+}
+
+/* RESPONSIVE GENERAL */
+
+@media (max-width: 750px) {
+
+    .topbar {
+        padding: 15px;
+        gap: 12px;
+    }
+
+    .topbar h2 {
+        font-size: 17px;
+    }
+
+    .sidebar-logo h2 {
+        font-size: 21px;
+    }
+
+    .sidebar-menu {
+        gap: 6px;
+    }
+
+    .menu-item {
+        border-radius: 10px;
+    }
+
+    .menu-item.activo {
+        box-shadow: inset 0 -3px 0 #6C9CE5;
+    }
+}
+
+@media (max-width: 480px) {
+
+    .topbar h2 {
+        font-size: 15px;
+    }
+
+    .menu-toggle {
+        padding: 8px 12px;
+        font-size: 18px;
+    }
+
+    .main-content {
+        padding: 8px;
+    }
+
+}
+
+

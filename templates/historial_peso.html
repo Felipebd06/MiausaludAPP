@@ -1,0 +1,514 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+.peso-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.peso-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.peso-card {
+    background: white;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(80,110,160,.08);
+}
+
+.peso-card h4 {
+    font-size: 13px;
+    color: #71829E;
+    font-weight: 500;
+    margin-bottom: 12px;
+}
+
+.peso-card .valor {
+    font-size: 24px;
+    font-weight: 700;
+    color: #527FC8;
+}
+
+.peso-card small {
+    color: #8A9AB5;
+    display: block;
+    margin-top: 8px;
+    font-size: 11px;
+}
+
+.peso-panel {
+    background: white;
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 5px 15px rgba(80,110,160,.08);
+}
+
+.peso-panel h3 {
+    color: #527FC8;
+    font-size: 17px;
+    margin-bottom: 15px;
+}
+
+.peso-form {
+    display: flex;
+    gap: 12px;
+    align-items: end;
+    flex-wrap: wrap;
+}
+
+.peso-form .campo {
+    flex: 1;
+    min-width: 180px;
+}
+
+.peso-form label {
+    display: block;
+    color: #71829E;
+    font-size: 13px;
+    margin-bottom: 7px;
+}
+
+.peso-form input {
+    width: 100%;
+    padding: 11px;
+    border: 1px solid #D6E4FF;
+    border-radius: 9px;
+    outline: none;
+}
+
+.peso-form input:focus {
+    border-color: #6C9CE5;
+}
+
+.btn-peso {
+    background: #6C9CE5;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 9px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.btn-peso:hover {
+    background: #527FC8;
+}
+
+.peso-tabla {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+.peso-tabla th {
+    background: #F4F8FF;
+    color: #71829E;
+    text-align: left;
+    padding: 12px;
+}
+
+.peso-tabla td {
+    padding: 12px;
+    border-bottom: 1px solid #EDF2FA;
+    color: #344563;
+}
+
+.peso-tabla tr:last-child td {
+    border-bottom: none;
+}
+
+.peso-vacio {
+    color: #8A9AB5;
+    padding: 15px;
+    font-size: 13px;
+}
+
+@media(max-width: 900px) {
+    .peso-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media(max-width: 500px) {
+    .peso-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
+<div class="peso-header">
+    <div>
+        <h2>⚖️ Historial de peso</h2>
+        <p style="color:#8A9AB5;font-size:13px;">
+            Seguimiento de crecimiento y evolución de tus michis.
+        </p>
+    </div>
+
+    <div style="background:white;padding:12px;border-radius:12px;">
+        🐱 Seleccionar gato:
+        <select id="selectorGato" onchange="cargarPesajes()"
+                style="padding:8px;border:1px solid #D6E4FF;border-radius:8px;">
+            {% for gato in gatos %}
+            <option value="{{ gato.id }}">{{ gato.nombre }}</option>
+            {% endfor %}
+        </select>
+    </div>
+</div>
+
+{% if gatos %}
+
+<div class="peso-grid">
+
+    <div class="peso-card">
+        <h4>⚖️ Peso actual</h4>
+        <div class="valor" id="pesoActual">-- kg</div>
+        <small>Último pesaje registrado</small>
+    </div>
+
+    <div class="peso-card">
+        <h4>🐾 Peso inicial</h4>
+        <div class="valor" id="pesoInicial">-- kg</div>
+        <small>Peso al registrar el gato</small>
+    </div>
+
+    <div class="peso-card">
+        <h4>📈 Variación</h4>
+        <div class="valor" id="variacionPeso">-- kg</div>
+        <small>Respecto al peso inicial</small>
+    </div>
+
+    <div class="peso-card">
+        <h4>📋 Registros</h4>
+        <div class="valor" id="totalPesajes">0</div>
+        <small>Total de pesajes</small>
+    </div>
+
+</div>
+
+<div class="peso-panel">
+    <h3>➕ Registrar nuevo pesaje</h3>
+
+    <form class="peso-form" id="formPesaje">
+
+        <div class="campo">
+            <label for="nuevoPeso">Peso del gato (kg)</label>
+            <input type="number" id="nuevoPeso"
+                   step="0.01" min="0.01" max="100"
+                   placeholder="Ej. 4.25" required>
+        </div>
+
+        <div class="campo">
+            <label for="fechaPesaje">Fecha del pesaje</label>
+            <input type="datetime-local" id="fechaPesaje">
+        </div>
+
+        <button type="submit" class="btn-peso">
+            💾 Registrar peso
+        </button>
+
+    </form>
+
+    <p id="mensajePesaje" style="font-size:13px;margin-top:12px;"></p>
+</div>
+
+<div class="peso-panel">
+    <h3>📊 Evolución del peso</h3>
+    <div style="height:320px;">
+        <canvas id="graficaPeso"></canvas>
+    </div>
+</div>
+
+<div class="peso-panel">
+    <h3>📚 Historial de pesajes</h3>
+
+    <div style="overflow-x:auto;">
+        <table class="peso-tabla">
+            <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Peso registrado</th>
+                    <th>Variación respecto al anterior</th>
+                </tr>
+            </thead>
+
+            <tbody id="tablaPesajes">
+                <tr>
+                    <td colspan="3" class="peso-vacio">
+                        Cargando registros...
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% else %}
+
+<div class="peso-panel">
+    <h3>🐱 No tienes gatos registrados</h3>
+    <p class="peso-vacio">
+        Primero registra un gato para comenzar a controlar su peso.
+    </p>
+    <a href="/gatos" class="btn-peso"
+       style="display:inline-block;text-decoration:none;margin-top:10px;">
+        ➕ Agregar gato
+    </a>
+</div>
+
+{% endif %}
+
+{% endblock %}
+
+{% block scripts %}
+
+{% if gatos %}
+
+<script>
+let graficaPeso = null;
+
+async function cargarPesajes() {
+
+    const gatoId = document.getElementById("selectorGato").value;
+
+    if (!gatoId) return;
+
+    try {
+
+        const respuesta = await fetch(`/api/pesajes/${gatoId}`);
+        const datos = await respuesta.json();
+
+        if (!respuesta.ok) {
+            throw new Error(datos.error || "Error consultando pesajes");
+        }
+
+        const historial = datos.historial || [];
+
+        // Orden cronológico
+        historial.sort((a, b) => {
+            return new Date(a.fecha) - new Date(b.fecha);
+        });
+
+        // Tarjetas
+        document.getElementById("pesoInicial").textContent =
+            datos.peso_inicial != null
+            ? Number(datos.peso_inicial).toFixed(2) + " kg"
+            : "-- kg";
+
+        document.getElementById("totalPesajes").textContent =
+            historial.length;
+
+        const pesoActual = historial.length
+            ? Number(historial[historial.length - 1].peso_kg)
+            : null;
+
+        document.getElementById("pesoActual").textContent =
+            pesoActual !== null
+            ? pesoActual.toFixed(2) + " kg"
+            : "-- kg";
+
+        const pesoInicial = datos.peso_inicial != null
+            ? Number(datos.peso_inicial)
+            : null;
+
+        const variacion = pesoActual !== null && pesoInicial !== null
+            ? pesoActual - pesoInicial
+            : null;
+
+        const elementoVariacion =
+            document.getElementById("variacionPeso");
+
+        elementoVariacion.textContent =
+            variacion !== null
+            ? (variacion > 0 ? "+" : "") + variacion.toFixed(2) + " kg"
+            : "-- kg";
+
+        // Tabla
+        const tabla = document.getElementById("tablaPesajes");
+
+        if (historial.length === 0) {
+
+            tabla.innerHTML = `
+                <tr>
+                    <td colspan="3" class="peso-vacio">
+                        No hay registros de peso.
+                    </td>
+                </tr>
+            `;
+
+        } else {
+
+            tabla.innerHTML = "";
+
+            historial.slice().reverse().forEach((pesaje, indice) => {
+
+                const fecha = new Date(pesaje.fecha)
+                    .toLocaleString("es-CO");
+
+                const peso = Number(pesaje.peso_kg);
+
+                let variacionAnterior = "--";
+
+                const indiceOriginal = historial.length - 1 - indice;
+
+                if (indiceOriginal > 0) {
+
+                    const anterior = Number(
+                        historial[indiceOriginal - 1].peso_kg
+                    );
+
+                    const diferencia = peso - anterior;
+
+                    variacionAnterior =
+                        (diferencia > 0 ? "+" : "") +
+                        diferencia.toFixed(2) + " kg";
+                }
+
+                tabla.innerHTML += `
+                    <tr>
+                        <td>${fecha}</td>
+                        <td><strong>${peso.toFixed(2)} kg</strong></td>
+                        <td>${variacionAnterior}</td>
+                    </tr>
+                `;
+            });
+        }
+
+        // Gráfica
+        const etiquetas = historial.map(p =>
+            new Date(p.fecha).toLocaleDateString("es-CO")
+        );
+
+        const pesos = historial.map(p =>
+            Number(p.peso_kg)
+        );
+
+        const ctx = document.getElementById("graficaPeso");
+
+        if (graficaPeso) {
+            graficaPeso.destroy();
+        }
+
+        graficaPeso = new Chart(ctx, {
+            type: "line",
+
+            data: {
+                labels: etiquetas,
+
+                datasets: [{
+                    label: "Peso (kg)",
+                    data: pesos,
+                    borderColor: "#6C9CE5",
+                    backgroundColor: "rgba(108,156,229,0.15)",
+                    fill: true,
+                    tension: 0.3,
+                    pointRadius: 5,
+                    pointBackgroundColor: "#527FC8"
+                }]
+            },
+
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        title: {
+                            display: true,
+                            text: "Peso (kg)"
+                        }
+                    },
+
+                    x: {
+                        title: {
+                            display: true,
+                            text: "Fecha"
+                        }
+                    }
+                }
+            }
+        });
+
+    } catch (error) {
+        console.error(error);
+        document.getElementById("mensajePesaje").textContent =
+            "❌ Error cargando los pesajes.";
+    }
+}
+
+// Registrar pesaje
+document.getElementById("formPesaje")
+    .addEventListener("submit", async function(event) {
+
+        event.preventDefault();
+
+        const gatoId = document.getElementById("selectorGato").value;
+        const peso = document.getElementById("nuevoPeso").value;
+        const fecha = document.getElementById("fechaPesaje").value;
+
+        const mensaje = document.getElementById("mensajePesaje");
+
+        try {
+
+            const respuesta = await fetch("/api/registro/peso", {
+
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify({
+                    gato_id: gatoId,
+                    peso_kg: peso,
+                    fecha: fecha || null
+                })
+
+            });
+
+            const datos = await respuesta.json();
+
+            if (!respuesta.ok) {
+                throw new Error(datos.error || "No se pudo registrar");
+            }
+
+            mensaje.style.color = "#3A9D65";
+            mensaje.textContent = "✅ Pesaje registrado correctamente.";
+
+            document.getElementById("nuevoPeso").value = "";
+            document.getElementById("fechaPesaje").value = "";
+
+            await cargarPesajes();
+
+        } catch (error) {
+
+            mensaje.style.color = "#D9534F";
+            mensaje.textContent = "❌ " + error.message;
+
+        }
+    });
+
+// Cargar fecha actual
+document.getElementById("fechaPesaje").value =
+    new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+    .toISOString().slice(0,16);
+
+// Carga inicial
+cargarPesajes();
+</script>
+
+{% endif %}
+
+{% endblock %}

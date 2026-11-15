@@ -1,0 +1,128 @@
+
+{% extends "base.html" %}
+
+{% block title %}Editar michi | MiauSalud{% endblock %}
+
+{% block content %}
+
+<div class="contenedor formulario-gato">
+
+    <div class="encabezado-gatos">
+        <div>
+            <h1>✏️ Editar perfil</h1>
+            <p>Actualiza la información de {{ gato["nombre"] }}.</p>
+        </div>
+    </div>
+
+    <form method="POST" enctype="multipart/form-data">
+
+        <div class="formulario-perfil">
+
+            <label for="nombre">Nombre del gato</label>
+            <input type="text" id="nombre" name="nombre"
+                   value="{{ gato['nombre'] }}" required>
+
+            <label for="fecha_nacimiento">Fecha de nacimiento</label>
+            <input type="date" id="fecha_nacimiento"
+                   name="fecha_nacimiento"
+                   value="{{ gato['fecha_nacimiento'] or '' }}">
+
+            <label for="sexo">Sexo</label>
+            <select id="sexo" name="sexo">
+                <option value="">Seleccionar</option>
+                <option value="Macho" {% if gato["sexo"] == "Macho" %}selected{% endif %}>Macho</option>
+                <option value="Hembra" {% if gato["sexo"] == "Hembra" %}selected{% endif %}>Hembra</option>
+            </select>
+
+            <label for="uid_nfc">Tarjeta NFC</label>
+            <input type="text" id="uid_nfc" name="uid_nfc"
+                   value="{{ gato['uid_nfc'] or '' }}">
+
+            <label>Fotografía actual</label>
+
+            <div>
+                {% if gato["foto"] %}
+                    <img src="{{ url_for('static', filename=gato['foto']) }}"
+                         class="foto-perfil"
+                         alt="Foto de {{ gato['nombre'] }}">
+                {% else %}
+                    <div class="foto-placeholder">🐱</div>
+                {% endif %}
+            </div>
+
+            <label for="foto">Cambiar fotografía</label>
+            <input type="file" id="foto" name="foto"
+                   accept=".jpg,.jpeg,.png,.webp">
+
+        </div>
+
+        <hr>
+
+        <h2>🍽️ Alimentación</h2>
+
+        <div class="formulario-perfil">
+
+            <label for="tipo_alimento">Tipo de alimento</label>
+            <select id="tipo_alimento" name="tipo_alimento">
+                <option value="">Seleccionar</option>
+                <option value="Seco" {% if gato["tipo_alimento"] == "Seco" %}selected{% endif %}>Seco</option>
+                <option value="Húmedo" {% if gato["tipo_alimento"] == "Húmedo" %}selected{% endif %}>Húmedo</option>
+                <option value="Mixto" {% if gato["tipo_alimento"] == "Mixto" %}selected{% endif %}>Mixto</option>
+            </select>
+
+            <label for="nombre_alimento">Nombre del alimento</label>
+            <input type="text" id="nombre_alimento"
+                   name="nombre_alimento"
+                   value="{{ gato['nombre_alimento'] or '' }}">
+
+            <label for="gramos_racion">Gramos por ración</label>
+            <input type="number" id="gramos_racion"
+                   name="gramos_racion" min="0" step="0.1"
+                   value="{{ gato['gramos_racion'] or '' }}">
+
+            <label for="raciones_dia">Raciones al día</label>
+            <input type="number" id="raciones_dia"
+                   name="raciones_dia" min="1" step="1"
+                   value="{{ gato['raciones_dia'] or '' }}">
+
+        </div>
+
+        <hr>
+
+        <h2>⚖️ Información de peso</h2>
+
+        <div class="formulario-perfil">
+
+            <label for="peso_inicial">Peso inicial (kg)</label>
+            <input type="number"
+                   id="peso_inicial"
+                   name="peso_inicial"
+                   min="0.1"
+                   max="30"
+                   step="0.01"
+                   placeholder="Ej. 4.50"
+                   value="{{ gato['peso_inicial'] if gato['peso_inicial'] is not none else '' }}">
+
+            <small>
+                Este valor corresponde al peso inicial registrado del michi.
+            </small>
+
+        </div>
+
+        <div class="acciones-gato">
+
+            <button type="submit" class="boton-agregar">
+                💾 Guardar cambios
+            </button>
+
+            <a href="/mis-gatos" class="boton-editar">
+                ↩ Cancelar
+            </a>
+
+        </div>
+
+    </form>
+
+</div>
+
+{% endblock %}

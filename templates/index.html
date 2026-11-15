@@ -1,0 +1,137 @@
+
+{% extends "base.html" %}
+
+{% block title %}MiauSalud | Dashboard{% endblock %}
+
+{% block content %}
+
+<div class="contenedor dashboard">
+
+    <!-- ENCABEZADO -->
+    <header class="encabezado-dashboard">
+
+        <div>
+            <h1>🐾 Dashboard</h1>
+            <p>Monitoreo inteligente y bienestar de tus michis.</p>
+        </div>
+
+        <div class="selector-michi">
+
+            <label for="selectorGato">Consultar información de:</label>
+
+            <select id="selectorGato">
+                {% for gato in gatos %}
+                    <option value="{{ gato['id'] }}">
+                        {{ gato['nombre'] }}
+                    </option>
+                {% endfor %}
+            </select>
+
+        </div>
+
+    </header>
+
+    {% if gatos %}
+
+    <!-- INFORMACIÓN DEL GATO -->
+    <section class="resumen-michi">
+
+        <div class="tarjeta dashboard-card peso">
+            <span class="icono">⚖️</span>
+            <h2>Peso actual</h2>
+            <p class="valor" id="pesoActual">-- kg</p>
+            <p class="descripcion">Último pesaje registrado</p>
+        </div>
+
+        <div class="tarjeta dashboard-card alimentacion">
+            <span class="icono">🍽️</span>
+            <h2>Comidas de hoy</h2>
+            <p class="valor" id="comidasHoy">0</p>
+            <p class="descripcion">Tomas registradas</p>
+        </div>
+
+        <div class="tarjeta dashboard-card gramos">
+            <span class="icono">🥣</span>
+            <h2>Consumo de hoy</h2>
+            <p class="valor" id="gramosHoy">0 g</p>
+            <p class="descripcion">Alimento dispensado</p>
+        </div>
+
+    </section>
+
+    <!-- ÚLTIMO REGISTRO -->
+    <section class="tarjeta ultima-actividad">
+
+        <h2>🐱 Información del michi</h2>
+
+        <div class="datos-michi">
+
+            <p>
+                <strong>Nombre:</strong>
+                <span id="nombreMichi">--</span>
+            </p>
+
+            <p>
+                <strong>Peso inicial:</strong>
+                <span id="pesoInicial">-- kg</span>
+            </p>
+
+            <p>
+                <strong>Último pesaje:</strong>
+                <span id="fechaPesaje">--</span>
+            </p>
+
+            <p>
+                <strong>Última alimentación:</strong>
+                <span id="ultimaComida">--</span>
+            </p>
+
+        </div>
+
+    </section>
+
+    <!-- GRÁFICAS -->
+    <section class="paneles-dashboard">
+
+        <article class="tarjeta">
+            <h2>⚖️ Evolución del peso</h2>
+            <canvas id="graficaPeso"></canvas>
+        </article>
+
+        <article class="tarjeta">
+            <h2>🍽️ Alimentación semanal</h2>
+            <canvas id="graficaConsumo"></canvas>
+        </article>
+
+    </section>
+
+    {% else %}
+
+    <!-- SIN GATOS -->
+    <section class="tarjeta estado-vacio">
+
+        <div class="foto-placeholder">😿</div>
+
+        <h2>¡Todavía no tienes michis registrados!</h2>
+
+        <p>Registra tu primer michi para comenzar a monitorear su bienestar.</p>
+
+        <a href="/gatos" class="boton-agregar">
+            ➕ Registrar mi primer michi
+        </a>
+
+    </section>
+
+    {% endif %}
+
+    <footer>
+        MiauSalud 🐾 | Monitoreo inteligente para tu michi
+    </footer>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+
+{% endblock %}

@@ -1,0 +1,309 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+.sistema-header {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:15px;
+    margin-bottom:20px;
+}
+
+.sistema-grid {
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:15px;
+    margin-bottom:20px;
+}
+
+.sistema-card {
+    background:white;
+    padding:20px;
+    border-radius:15px;
+    box-shadow:0 5px 15px rgba(80,110,160,.08);
+}
+
+.sistema-card h4 {
+    font-size:13px;
+    color:#71829E;
+    margin-bottom:12px;
+    font-weight:500;
+}
+
+.sistema-card .valor {
+    font-size:22px;
+    font-weight:700;
+    color:#527FC8;
+}
+
+.sistema-card small {
+    color:#8A9AB5;
+    display:block;
+    margin-top:8px;
+    font-size:11px;
+}
+
+.sistema-panel {
+    background:white;
+    padding:20px;
+    border-radius:15px;
+    margin-bottom:20px;
+    box-shadow:0 5px 15px rgba(80,110,160,.08);
+}
+
+.sistema-panel h3 {
+    color:#527FC8;
+    font-size:17px;
+    margin-bottom:15px;
+}
+
+.sistema-tabla {
+    width:100%;
+    border-collapse:collapse;
+    font-size:13px;
+}
+
+.sistema-tabla th {
+    background:#F4F8FF;
+    color:#71829E;
+    text-align:left;
+    padding:12px;
+}
+
+.sistema-tabla td {
+    padding:12px;
+    border-bottom:1px solid #EDF2FA;
+    color:#344563;
+}
+
+.estado-badge {
+    display:inline-block;
+    padding:7px 12px;
+    border-radius:20px;
+    font-size:12px;
+    font-weight:600;
+}
+
+.estado-conectado {
+    background:#DDF5D8;
+    color:#3A8D55;
+}
+
+.estado-desconectado {
+    background:#FCE7EF;
+    color:#C15D83;
+}
+
+.estado-desconocido {
+    background:#FFF1CF;
+    color:#AA8130;
+}
+
+.btn-actualizar {
+    background:#6C9CE5;
+    color:white;
+    border:none;
+    padding:10px 18px;
+    border-radius:9px;
+    cursor:pointer;
+}
+
+.btn-actualizar:hover {
+    background:#527FC8;
+}
+
+@media(max-width:1000px) {
+    .sistema-grid {
+        grid-template-columns:repeat(2,1fr);
+    }
+}
+
+@media(max-width:500px) {
+    .sistema-grid {
+        grid-template-columns:1fr;
+    }
+}
+</style>
+
+<div class="sistema-header">
+    <div>
+        <h2>⚙️ Sistema</h2>
+        <p style="color:#8A9AB5;font-size:13px;">
+            Monitoreo del dispositivo ESP32 y estado general de MiauSalud.
+        </p>
+    </div>
+
+    <button class="btn-actualizar" onclick="cargarSistema()">
+        🔄 Actualizar estado
+    </button>
+</div>
+
+<div class="sistema-grid">
+
+    <div class="sistema-card">
+        <h4>📡 Estado del dispositivo</h4>
+        <div id="estadoDispositivo">
+            <span class="estado-badge estado-desconocido">
+                Consultando...
+            </span>
+        </div>
+        <small>Estado de comunicación</small>
+    </div>
+
+    <div class="sistema-card">
+        <h4>🌐 Dirección IP</h4>
+        <div class="valor" id="ipDispositivo">--</div>
+        <small>IP de la ESP32</small>
+    </div>
+
+    <div class="sistema-card">
+        <h4>🕒 Última comunicación</h4>
+        <div class="valor" style="font-size:16px;" id="ultimaComunicacion">
+            --
+        </div>
+        <small>Último reporte recibido</small>
+    </div>
+
+    <div class="sistema-card">
+        <h4>🐱 Dispositivo</h4>
+        <div class="valor" style="font-size:17px;" id="nombreDispositivo">
+            ESP32 MiauSalud
+        </div>
+        <small>Controlador principal</small>
+    </div>
+
+</div>
+
+<div class="sistema-panel">
+    <h3>📋 Información del dispositivo</h3>
+
+    <div style="overflow-x:auto;">
+        <table class="sistema-tabla">
+            <tbody>
+                <tr>
+                    <th>Identificador</th>
+                    <td id="idDispositivo">--</td>
+                </tr>
+                <tr>
+                    <th>Nombre</th>
+                    <td id="nombreDetalle">ESP32 MiauSalud</td>
+                </tr>
+                <tr>
+                    <th>Estado</th>
+                    <td id="estadoDetalle">--</td>
+                </tr>
+                <tr>
+                    <th>IP</th>
+                    <td id="ipDetalle">--</td>
+                </tr>
+                <tr>
+                    <th>Última actualización</th>
+                    <td id="actualizacionDetalle">--</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="sistema-panel">
+    <h3>🔌 Preparación para conexión ESP32</h3>
+
+    <p style="font-size:13px;color:#71829E;line-height:1.8;">
+        Actualmente el panel consulta el estado almacenado en la base de datos.
+        Cuando conectemos la ESP32 por Wi-Fi, podrá reportar su dirección IP,
+        estado de conexión y última comunicación.
+    </p>
+
+    <div style="background:#F4F8FF;padding:15px;border-radius:10px;margin-top:15px;">
+        <strong style="color:#527FC8;">Estado actual:</strong>
+        <p style="font-size:13px;color:#71829E;margin-top:8px;">
+            Interfaz preparada. La conexión física y las pruebas reales
+            se realizarán posteriormente.
+        </p>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+
+<script>
+async function cargarSistema() {
+
+    try {
+
+        const respuesta = await fetch("/api/sistema");
+        const datos = await respuesta.json();
+
+        if (!respuesta.ok) {
+            throw new Error("No se pudo consultar el sistema");
+        }
+
+        const estado = datos.estado || "desconocido";
+
+        let claseEstado = "estado-desconocido";
+        let textoEstado = "Desconocido";
+
+        if (estado === "conectado") {
+            claseEstado = "estado-conectado";
+            textoEstado = "Conectado";
+        }
+
+        if (estado === "desconectado") {
+            claseEstado = "estado-desconectado";
+            textoEstado = "Desconectado";
+        }
+
+        document.getElementById("estadoDispositivo").innerHTML =
+            `<span class="estado-badge ${claseEstado}">
+                ${textoEstado}
+            </span>`;
+
+        document.getElementById("ipDispositivo").textContent =
+            datos.ip || "--";
+
+        document.getElementById("ultimaComunicacion").textContent =
+            datos.ultima_actualizacion
+            ? new Date(datos.ultima_actualizacion).toLocaleString("es-CO")
+            : "Sin comunicación";
+
+        document.getElementById("nombreDispositivo").textContent =
+            datos.nombre || "ESP32 MiauSalud";
+
+        document.getElementById("idDispositivo").textContent =
+            datos.id || "--";
+
+        document.getElementById("nombreDetalle").textContent =
+            datos.nombre || "ESP32 MiauSalud";
+
+        document.getElementById("estadoDetalle").textContent =
+            textoEstado;
+
+        document.getElementById("ipDetalle").textContent =
+            datos.ip || "--";
+
+        document.getElementById("actualizacionDetalle").textContent =
+            datos.ultima_actualizacion || "--";
+
+    } catch(error) {
+
+        console.error(error);
+
+        document.getElementById("estadoDispositivo").innerHTML =
+            `<span class="estado-badge estado-desconocido">
+                Error de consulta
+            </span>`;
+    }
+}
+
+cargarSistema();
+
+// Actualización automática cada 10 segundos
+setInterval(cargarSistema, 10000);
+</script>
+
+{% endblock %}

@@ -1,0 +1,113 @@
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{% block title %}MiauSalud{% endblock %}</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    {% block head %}{% endblock %}
+</head>
+
+<body>
+
+<div class="app-layout">
+
+    <!-- MENU LATERAL -->
+    <aside class="sidebar">
+
+        <div class="sidebar-logo">
+            <img src="{{ url_for('static', filename='img/gato1.jpg') }}"
+                 alt="Logo MiauSalud">
+            <h2>MiauSalud</h2>
+        </div>
+
+        <nav class="sidebar-menu">
+
+            <a href="/" class="menu-item {% if request.path == '/' %}activo{% endif %}">
+                🏠 Inicio
+            </a>
+
+            <a href="/mis-gatos"
+               class="menu-item {% if request.path == '/mis-gatos' %}activo{% endif %}">
+                🐱 Mis gatos
+            </a>
+
+            <a href="/gatos"
+               class="menu-item {% if request.path == '/gatos' %}activo{% endif %}">
+                ➕ Agregar gato
+            </a>
+
+            <a href="/alimentacion"
+               class="menu-item {% if request.path == '/alimentacion' %}activo{% endif %}">
+                🍽️ Alimentación
+            </a>
+
+            <a href="/historial-peso"
+               class="menu-item {% if request.path == '/historial-peso' %}activo{% endif %}">
+                ⚖️ Historial de peso
+            </a>
+
+            <a href="/estadisticas"
+               class="menu-item {% if request.path == '/estadisticas' %}activo{% endif %}">
+                📊 Estadísticas
+            </a>
+
+            <a href="/sistema"
+               class="menu-item {% if request.path == '/sistema' %}activo{% endif %}">
+                ⚙️ Sistema
+            </a>
+
+        </nav>
+
+        <div class="sidebar-footer">
+            🐾 Cuidando a nuestros michis
+        </div>
+
+    </aside>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="main-content">
+
+        <header class="topbar">
+
+            <button id="toggleMenu" class="menu-toggle" type="button">
+                ☰
+            </button>
+
+            <h2>🐾 Bienvenido a MiauSalud</h2>
+
+        </header>
+
+        <section class="page-content">
+
+            {% block content %}
+            {% endblock %}
+
+        </section>
+
+    </main>
+
+</div>
+<!-- LIBRERIA DE GRAFICAS -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- CONTROL DEL MENU -->
+<script>
+    const botonMenu = document.getElementById("toggleMenu");
+
+    botonMenu.addEventListener("click", function () {
+        document.querySelector(".app-layout").classList.toggle("menu-oculto");
+    });
+</script>
+
+<!-- SCRIPTS DE CADA PAGINA -->
+{% block scripts %}{% endblock %}
+
+</body>
+</html>

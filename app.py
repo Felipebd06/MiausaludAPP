@@ -24,7 +24,10 @@ from database.db import (
     obtener_pesajes_gato,
     obtener_estadisticas_gato,
     actualizar_estado_dispositivo,
-    obtener_estado_dispositivo
+    obtener_estado_dispositivo,
+    registrar_telemetria,
+    actualizar_actuadores,
+    obtener_ultima_telemetria
 )
 
 app = Flask(__name__)
@@ -43,7 +46,9 @@ inicializar_db()
 # =========================================================
 
 def guardar_fotografia(archivo):
+
     if archivo and archivo.filename:
+
         extension = Path(secure_filename(archivo.filename)).suffix.lower()
 
         if extension not in [".jpg", ".jpeg", ".png", ".webp"]:
@@ -58,8 +63,10 @@ def guardar_fotografia(archivo):
 
 
 def convertir_numero(valor):
+
     try:
         return float(valor)
+
     except (TypeError, ValueError):
         return None
 
@@ -70,12 +77,15 @@ def convertir_numero(valor):
 
 @app.route("/")
 def inicio():
+
     gatos = obtener_gatos()
+
     return render_template("index.html", gatos=gatos)
 
 
 @app.route("/api/dashboard/<int:gato_id>")
 def api_dashboard(gato_id):
+
     datos = obtener_datos_dashboard(gato_id)
 
     if datos is None:
@@ -90,12 +100,15 @@ def api_dashboard(gato_id):
 
 @app.route("/mis-gatos")
 def mis_gatos():
+
     gatos = obtener_gatos()
+
     return render_template("mis_gatos.html", gatos=gatos)
 
 
 @app.route("/eliminar-gato/<int:gato_id>", methods=["POST"])
 def eliminar_gato_ruta(gato_id):
+
     gato = obtener_gato(gato_id)
 
     if gato is None:
@@ -212,6 +225,7 @@ def editar_gato(gato_id):
 
 @app.route("/alimentacion")
 def alimentacion():
+
     gatos = obtener_gatos()
 
     return render_template(
@@ -257,6 +271,7 @@ def api_alimentacion(gato_id):
 
 @app.route("/historial-peso")
 def historial_peso():
+
     gatos = obtener_gatos()
 
     return render_template(
@@ -288,6 +303,7 @@ def api_pesajes(gato_id):
 
 @app.route("/estadisticas")
 def estadisticas():
+
     gatos = obtener_gatos()
 
     return render_template(
@@ -315,6 +331,7 @@ def api_estadisticas(gato_id):
 
 @app.route("/sistema")
 def sistema():
+
     dispositivo = obtener_estado_dispositivo()
 
     return render_template(
@@ -340,6 +357,67 @@ def api_sistema():
 
 
 # =========================================================
+# TELEMETRÍA ESP32
+# =========================================================
+
+@app.route("/api/telemetria", methods=["GET"])
+def api_consultar_telemetria():
+
+    datos = obtener_ultima_telemetria()
+
+    if datos:
+        return jsonify(dict(datos))
+
+    return jsonify({
+        "temp1_c": None,
+        "temp2_c": None,
+        "temp3_c": None,
+        "hx1_kg": None,
+        "hx2_kg": None,
+        "fecha": None
+    })
+
+
+@app.route("/api/telemetria", methods=["POST"])
+def api_telemetria():
+
+    datos = request.get_json(silent=True)
+
+    if not datos:
+        return jsonify({
+            "ok": False,
+            "error": "No se recibieron datos"
+        }), 400
+
+    registrar_telemetria(
+        datos.get("temp1_c"),
+        datos.get("temp2_c"),
+        datos.get("temp3_c"),
+        datos.get("hx1_kg"),
+        datos.get("hx2_kg")
+    )
+
+    actualizar_actuadores(
+        datos.get("peltier_pct", 0),
+        datos.get("ventilador_pct", 0),
+        datos.get("bomba_pct", 0),
+        datos.get("servo_pct", 0),
+        datos.get("stepper_moviendo", 0),
+        datos.get("sw1", 0),
+        datos.get("sw2", 0),
+        datos.get("sw3", 0),
+        datos.get("sw4", 0),
+        datos.get("sw5", 0),
+        datos.get("sw6", 0)
+    )
+
+    return jsonify({
+        "ok": True,
+        "mensaje": "Telemetria recibida correctamente"
+    }), 200
+
+
+# =========================================================
 # REGISTRO DE ALIMENTACIÓN DESDE ESP32
 # =========================================================
 
@@ -349,6 +427,7 @@ def api_registrar_alimentacion():
     datos = request.get_json(silent=True) or request.form
 
     gato_id = datos.get("gato_id")
+
     gramos = convertir_numero(
         datos.get("cantidad_gramos")
     )
@@ -393,39 +472,35 @@ def api_registrar_temperatura():
 
     datos = request.get_json(silent=True) or request.form
 
-    temperatura = convertir_numero(
-        datos.get("temperatura")
-    )
-
     gato_id = datos.get("gato_id")
 
-    if temperatura is None:
+    temperatura = convertir_numero(
+        datos.get("temperatura_c")
+    )
+
+    if not gato_id or temperatura is None:
         return jsonify({
             "ok": False,
-            "error": "Se requiere una temperatura válida"
+            "error": "Se requiere gato_id y temperatura válida"
         }), 400
 
-    if gato_id is not None:
+    gato = obtener_gato(int(gato_id))
 
-        gato = obtener_gato(int(gato_id))
-
-        if gato is None:
-            return jsonify({
-                "ok": False,
-                "error": "Gato no encontrado"
-            }), 404
-
-        gato_id = int(gato_id)
+    if gato is None:
+        return jsonify({
+            "ok": False,
+            "error": "Gato no encontrado"
+        }), 404
 
     registrar_temperatura(
+        int(gato_id),
         temperatura,
-        gato_id,
         datos.get("fecha")
     )
 
     socketio.emit("actualizacion_temperatura", {
-        "gato_id": gato_id,
-        "temperatura": temperatura
+        "gato_id": int(gato_id),
+        "temperatura_c": temperatura
     })
 
     return jsonify({
@@ -444,6 +519,7 @@ def api_registrar_peso():
     datos = request.get_json(silent=True) or request.form
 
     gato_id = datos.get("gato_id")
+
     peso = convertir_numero(
         datos.get("peso_kg")
     )
@@ -459,7 +535,7 @@ def api_registrar_peso():
     if gato is None:
         return jsonify({
             "ok": False,
-            "error": "Gato no encontrado"
+        "error": "Gato no encontrado"
         }), 404
 
     registrar_pesaje(

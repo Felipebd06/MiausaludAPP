@@ -142,6 +142,8 @@
     </button>
 </div>
 
+<!-- ESTADO DEL DISPOSITIVO -->
+
 <div class="sistema-grid">
 
     <div class="sistema-card">
@@ -178,6 +180,8 @@
 
 </div>
 
+<!-- INFORMACIÓN DEL DISPOSITIVO -->
+
 <div class="sistema-panel">
     <h3>📋 Información del dispositivo</h3>
 
@@ -209,20 +213,66 @@
     </div>
 </div>
 
+<!-- TELEMETRÍA -->
+
+<div class="sistema-panel">
+    <h3>📊 Telemetría de sensores</h3>
+
+    <div class="sistema-grid">
+
+        <div class="sistema-card">
+            <h4>🌡️ Temperatura 1</h4>
+            <div class="valor" id="temp1">-- °C</div>
+            <small>Sensor TEMP1</small>
+        </div>
+
+        <div class="sistema-card">
+            <h4>🌡️ Temperatura 2</h4>
+            <div class="valor" id="temp2">-- °C</div>
+            <small>Sensor TEMP2</small>
+        </div>
+
+        <div class="sistema-card">
+            <h4>🌡️ Temperatura 3</h4>
+            <div class="valor" id="temp3">-- °C</div>
+            <small>Sensor TEMP3</small>
+        </div>
+
+        <div class="sistema-card">
+            <h4>⚖️ Peso HX1</h4>
+            <div class="valor" id="hx1">-- kg</div>
+            <small>Báscula 1</small>
+        </div>
+
+        <div class="sistema-card">
+            <h4>⚖️ Peso HX2</h4>
+            <div class="valor" id="hx2">-- kg</div>
+            <small>Báscula 2</small>
+        </div>
+
+    </div>
+
+    <p style="font-size:13px;color:#71829E;">
+        Último registro:
+        <strong id="fechaTelemetria">Sin registros</strong>
+    </p>
+
+</div>
+
+<!-- PREPARACIÓN ESP32 -->
+
 <div class="sistema-panel">
     <h3>🔌 Preparación para conexión ESP32</h3>
 
     <p style="font-size:13px;color:#71829E;line-height:1.8;">
-        Actualmente el panel consulta el estado almacenado en la base de datos.
-        Cuando conectemos la ESP32 por Wi-Fi, podrá reportar su dirección IP,
-        estado de conexión y última comunicación.
+        El panel consulta el estado almacenado en la base de datos
+        y muestra la última telemetría recibida.
     </p>
 
     <div style="background:#F4F8FF;padding:15px;border-radius:10px;margin-top:15px;">
         <strong style="color:#527FC8;">Estado actual:</strong>
         <p style="font-size:13px;color:#71829E;margin-top:8px;">
-            Interfaz preparada. La conexión física y las pruebas reales
-            se realizarán posteriormente.
+            Interfaz preparada para monitoreo de sensores y dispositivo.
         </p>
     </div>
 </div>
@@ -232,6 +282,11 @@
 {% block scripts %}
 
 <script>
+
+// =========================================================
+// CARGAR ESTADO DEL SISTEMA
+// =========================================================
+
 async function cargarSistema() {
 
     try {
@@ -300,10 +355,60 @@ async function cargarSistema() {
     }
 }
 
-cargarSistema();
+// =========================================================
+// CARGAR TELEMETRÍA
+// =========================================================
 
-// Actualización automática cada 10 segundos
-setInterval(cargarSistema, 10000);
+async function cargarTelemetria() {
+
+    try {
+
+        const respuesta = await fetch("/api/telemetria");
+        const datos = await respuesta.json();
+
+        if (!respuesta.ok) {
+            throw new Error("No se pudo consultar la telemetría");
+        }
+
+        document.getElementById("temp1").textContent =
+            datos.temp1_c != null ? datos.temp1_c + " °C" : "-- °C";
+
+        document.getElementById("temp2").textContent =
+            datos.temp2_c != null ? datos.temp2_c + " °C" : "-- °C";
+
+        document.getElementById("temp3").textContent =
+            datos.temp3_c != null ? datos.temp3_c + " °C" : "-- °C";
+
+        document.getElementById("hx1").textContent =
+            datos.hx1_kg != null ? datos.hx1_kg + " kg" : "-- kg";
+
+        document.getElementById("hx2").textContent =
+            datos.hx2_kg != null ? datos.hx2_kg + " kg" : "-- kg";
+
+        document.getElementById("fechaTelemetria").textContent =
+            datos.fecha || "Sin registros";
+
+    } catch(error) {
+
+        console.error("Error cargando telemetría:", error);
+
+    }
+}
+
+// =========================================================
+// ACTUALIZACIÓN
+// =========================================================
+
+async function actualizarPanel() {
+    await cargarSistema();
+    await cargarTelemetria();
+}
+
+actualizarPanel();
+
+// Actualización automática cada 5 segundos
+setInterval(actualizarPanel, 5000);
+
 </script>
 
 {% endblock %}

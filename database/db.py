@@ -67,6 +67,46 @@ def inicializar_db():
                 ultima_actualizacion DATETIME
             )
         """)
+                # =====================================================
+        # TELEMETRÍA DE SENSORES
+        # =====================================================
+        conexion.execute("""
+            CREATE TABLE IF NOT EXISTS telemetria_sensores (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                temp1_c REAL,
+                temp2_c REAL,
+                temp3_c REAL,
+                hx1_kg REAL,
+                hx2_kg REAL,
+                fecha DATETIME DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
+
+        # =====================================================
+        # ESTADO ACTUAL DE ACTUADORES Y SWITCHES
+        # =====================================================
+        conexion.execute("""
+            CREATE TABLE IF NOT EXISTS estado_actuadores (
+                id INTEGER PRIMARY KEY CHECK (id = 1),
+                peltier_pct REAL DEFAULT 0,
+                ventilador_pct REAL DEFAULT 0,
+                bomba_pct REAL DEFAULT 0,
+                servo_pct REAL DEFAULT 0,
+                stepper_moviendo INTEGER DEFAULT 0,
+                sw1 INTEGER DEFAULT 0,
+                sw2 INTEGER DEFAULT 0,
+                sw3 INTEGER DEFAULT 0,
+                sw4 INTEGER DEFAULT 0,
+                sw5 INTEGER DEFAULT 0,
+                sw6 INTEGER DEFAULT 0,
+                fecha DATETIME DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
+
+        conexion.execute("""
+            INSERT OR IGNORE INTO estado_actuadores (id)
+            VALUES (1)
+        """)
 
         # Columnas adicionales para gatos existentes
         columnas_gatos = [
@@ -504,3 +544,55 @@ def registrar_alimentacion(gato_id, cantidad_gramos, fecha=None):
                 )
                 VALUES (?, ?)
             """, (gato_id, cantidad_gramos))    
+# =========================================================
+# TELEMETRIA ESP32
+# =========================================================
+
+def registrar_telemetria(temp1_c, temp2_c, temp3_c, hx1_kg, hx2_kg):
+    with conectar() as conexion:
+        conexion.execute("""
+            INSERT INTO telemetria_sensores (
+                temp1_c, temp2_c, temp3_c, hx1_kg, hx2_kg
+            )
+            VALUES (?, ?, ?, ?, ?)
+        """, (temp1_c, temp2_c, temp3_c, hx1_kg, hx2_kg))
+# =========================================================
+# ESTADO ACTUAL DE ACTUADORES
+# =========================================================
+
+def actualizar_actuadores(
+    peltier_pct,
+    ventilador_pct,
+    bomba_pct,
+    servo_pct,
+    stepper_moviendo,
+    sw1, sw2, sw3, sw4, sw5, sw6
+):
+    with conectar() as conexion:
+        conexion.execute("""
+            UPDATE estado_actuadores
+            SET peltier_pct = ?,
+                ventilador_pct = ?,
+                bomba_pct = ?,
+                servo_pct = ?,
+                stepper_moviendo = ?,
+                sw1 = ?, sw2 = ?, sw3 = ?,
+                sw4 = ?, sw5 = ?, sw6 = ?,
+                fecha = CURRENT_TIMESTAMP
+            WHERE id = 1
+        """, (
+            peltier_pct,
+            ventilador_pct,
+            bomba_pct,
+            servo_pct,
+            stepper_moviendo,
+            sw1, sw2, sw3, sw4, sw5, sw6
+        ))
+def obtener_ultima_telemetria():
+    with conectar() as conexion:
+        return conexion.execute("""
+            SELECT *
+            FROM telemetria_sensores
+            ORDER BY id DESC
+            LIMIT 1
+        """).fetchone()
